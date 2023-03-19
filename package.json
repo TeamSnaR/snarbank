@@ -2,13 +2,17 @@
   "name": "snarbank",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "prepare": "nx g @nx-dotnet/core:restore"
+  },
   "private": true,
-  "dependencies": {},
   "devDependencies": {
+    "@nrwl/js": "15.8.7",
     "@nrwl/nx-cloud": "latest",
     "@nrwl/workspace": "15.8.7",
+    "@nx-dotnet/core": "^1.21.0",
     "nx": "15.8.7",
     "prettier": "^2.6.2"
-  }
+  },
+  "dependencies": {}
 }
