@@ -66,10 +66,9 @@ var expenses = new List<ExpenseDto>
 app.MapGet("api/expenses", () => expenses).WithName("GetExpenses");
 app.MapGet("api/expenses/{id}", (int id) =>
 {
-  var expense = expenses.FirstOrDefault(s => s.id == id);
-  return expense is null ?
-    Results.NotFound() :
-    Results.Ok(expense);
+  return expenses.SingleOrDefault(s => s.id == id) is var expense ?
+    Results.Ok(expense) :
+    Results.NotFound();
 }).WithName("GetOneExpense");
 
 app.Run();
