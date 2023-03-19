@@ -63,6 +63,7 @@ var expenses = new List<ExpenseDto>
     "Housing"
   ),
 };
+app.MapGet("api/expenses/recent", () => expenses.Take(5));
 app.MapGet("api/expenses", () => expenses).WithName("GetExpenses");
 app.MapGet("api/expenses/{id}", (int id) =>
 {
