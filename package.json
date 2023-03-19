@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "prepare": "nx g @nx-dotnet/core:restore"
+    "prepare": "nx g @nx-dotnet/core:restore",
+    "build:admin": "nx build admin-api",
+    "start:admin": "nx serve admin-api"
   },
   "private": true,
   "devDependencies": {
