@@ -1,7 +1,21 @@
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var AllowLocal = "_allowLocal";
+builder.Services.AddCors(options =>
+{
+  options.AddPolicy(name: AllowLocal
+,
+                    policy =>
+                    {
+                      policy.WithOrigins("http://localhost:4200");
+                    });
+});
+
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -9,7 +23,7 @@ if (app.Environment.IsDevelopment())
   app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
-
+app.UseCors(AllowLocal);
 app.MapGet("/ping", () => Results.NoContent());
 
 var expenses = new List<ExpenseDto>
@@ -63,6 +77,7 @@ var expenses = new List<ExpenseDto>
     "Housing"
   ),
 };
+
 app.MapGet("api/expenses/recent", () => expenses.Take(5));
 app.MapGet("api/expenses", () => expenses).WithName("GetExpenses");
 app.MapGet("api/expenses/{id}", (int id) =>
@@ -71,6 +86,7 @@ app.MapGet("api/expenses/{id}", (int id) =>
     Results.Ok(expense) :
     Results.NotFound();
 }).WithName("GetOneExpense");
+
 
 app.Run();
 

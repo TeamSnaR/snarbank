@@ -3,7 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "sourceRoot": "apps/admin-app/src",
-  "prefix": "snarbank",
+  "prefix": "snarbank-admin",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",
