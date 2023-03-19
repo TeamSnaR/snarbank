@@ -1,3 +1,5 @@
 {
-  "nugetPackages": {}
+  "nugetPackages": {
+    "Swashbuckle.AspNetCore": "6.2.3"
+  }
 }
