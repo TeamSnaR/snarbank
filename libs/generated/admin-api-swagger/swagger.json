@@ -1,0 +1,136 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+    "version": "1.0"
+  },
+  "paths": {
+    "/ping": {
+      "get": {
+        "tags": [
+          "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/expenses/recent": {
+      "get": {
+        "tags": [
+          "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expenses": {
+      "get": {
+        "tags": [
+          "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "operationId": "GetExpenses",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expenses/{id}": {
+      "get": {
+        "tags": [
+          "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "operationId": "GetOneExpense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ExpenseDto": {
+        "required": [
+          "category",
+          "id",
+          "merchant",
+          "totalPrice"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "merchant": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "totalPrice": {
+            "$ref": "#/components/schemas/Money"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Money": {
+        "required": [
+          "amount",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

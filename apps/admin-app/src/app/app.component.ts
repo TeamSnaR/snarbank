@@ -12,7 +12,7 @@ import { AsyncPipe, CurrencyPipe, NgFor } from '@angular/common';
     <ul>
       <li *ngFor="let expense of expenses$ | async">
         {{ expense.category }} {{ expense.merchant }}
-        {{ expense.totalPrice.amount | currency : expense.totalPrice.currency }}
+        {{ expense.totalPrice!.amount | currency : expense.totalPrice!.currency }}
       </li>
     </ul>
   `,

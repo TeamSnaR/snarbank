@@ -33,7 +33,22 @@
     },
     "lint": {
       "executor": "@nx-dotnet/core:format"
+    },
+    "swagger": {
+      "executor": "@nx-dotnet/core:update-swagger",
+      "outputs": [
+        "options.output"
+      ],
+      "options": {
+        "output": "libs/generated/admin-api-swagger/swagger.json"
+      },
+      "dependsOn": [
+        "build"
+      ]
     }
   },
-  "tags": ["scope:admin-api", "type:app"]
+  "tags": [
+    "scope:admin-api",
+    "type:app"
+  ]
 }

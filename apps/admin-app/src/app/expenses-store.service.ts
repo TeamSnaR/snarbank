@@ -1,17 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { ExpenseDto } from '@snarbank/generated/admin-api-types';
 import { concatMap } from 'rxjs';
 
-interface ExpenseDto {
-  id: number;
-  category: string;
-  merchant: string;
-  totalPrice: {
-    amount: number;
-    currency: string;
-  };
-}
 interface ExpensesStoreState {
   expenses: ExpenseDto[];
 }

@@ -5,6 +5,9 @@
   "scripts": {
     "prepare": "nx g @nx-dotnet/core:restore",
     "build:admin-api": "nx build admin-api",
+    "gen:admin-api:swagger": "nx swagger admin-api --skip-cache",
+    "gen:admin-api:types": "nx codegen admin-api-swagger --skip-cache",
+    "generate:admin-api:types": "npm run gen:admin-api:swagger && npm run gen:admin-api:types",
     "start:admin-api": "nx serve admin-api",
     "build:admin-app": "nx build admin-app",
     "start:admin-app": "nx serve admin-app"
@@ -29,7 +32,9 @@
     "@nrwl/nx-cloud": "latest",
     "@nrwl/workspace": "15.8.7",
     "@nx-dotnet/core": "^1.21.0",
+    "@openapitools/openapi-generator-cli": "2.3.7",
     "@schematics/angular": "~15.2.0",
+    "@trumbitta/nx-plugin-openapi": "^1.12.1",
     "@types/jest": "^29.4.0",
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.36.1",

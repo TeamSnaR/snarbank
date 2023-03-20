@@ -14,7 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@snarbank/generated/admin-api-types": [
+        "libs/generated/admin-api-types/src/index.ts"
+      ]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

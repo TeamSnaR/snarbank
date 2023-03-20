@@ -1,0 +1,19 @@
+{
+  "name": "admin-api-swagger",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "outputs": ["libs/generated/admin-api-swagger"]
+    },
+    "codegen": {
+      "executor": "@nx-dotnet/core:openapi-codegen",
+      "options": {
+        "openapiJsonPath": "libs/generated/admin-api-swagger/swagger.json",
+        "outputProject": "generated-admin-api-types"
+      },
+      "dependsOn": ["^swagger"]
+    }
+  },
+  "implicitDependencies": ["admin-api"]
+}
