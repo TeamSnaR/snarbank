@@ -10,7 +10,8 @@
     "generate:admin-api:types": "npm run gen:admin-api:swagger && npm run gen:admin-api:types",
     "start:admin-api": "nx serve admin-api",
     "build:admin-app": "nx build admin-app",
-    "start:admin-app": "nx serve admin-app"
+    "start:admin-app": "nx serve admin-app",
+    "start:admin": "nx run-many --target=serve --projects=admin-api,admin-app"
   },
   "private": true,
   "devDependencies": {

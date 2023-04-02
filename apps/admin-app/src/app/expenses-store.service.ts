@@ -1,14 +1,34 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
-import { ExpenseDto } from '@snarbank/generated/admin-api-types';
-import { concatMap } from 'rxjs';
+import { ExpenseDto, Money } from '@snarbank/generated/admin-api-types';
+import { concatMap, Observable, tap } from 'rxjs';
 
+export interface ExpenseData {
+  id: string;
+  merchant: string;
+  category: string;
+  totalPrice: Money;
+}
 interface ExpensesStoreState {
   expenses: ExpenseDto[];
+  expenseData: ExpenseData | null;
 }
 const DEFAULT_STATE = {
   expenses: [],
+  expenseData: null,
+};
+
+const initExpenseData = () => {
+  return {
+    id: 'abc',
+    merchant: '',
+    category: '',
+    totalPrice: {
+      currency: 'GBP',
+      amount: 0,
+    },
+  };
 };
 @Injectable({
   providedIn: 'root',
@@ -17,13 +37,20 @@ export class ExpensesStore extends ComponentStore<ExpensesStoreState> {
   private readonly httpClient = inject(HttpClient);
 
   readonly expenses$ = this.select((s) => s.expenses);
+  readonly expenseData$ = this.select((s) => s.expenseData);
   constructor() {
     super(DEFAULT_STATE);
     this.getExpenses();
   }
 
   loadExpenses = this.updater((state, expenses: ExpenseDto[]) => ({
+    ...state,
     expenses: [...state.expenses, ...expenses],
+  }));
+
+  insertExpense = this.updater((state, expense: ExpenseDto) => ({
+    ...state,
+    expenses: [...state.expenses, expense],
   }));
 
   readonly getExpenses = this.effect<void>(($) =>
@@ -35,6 +62,19 @@ export class ExpensesStore extends ComponentStore<ExpensesStoreState> {
       )
     )
   );
-
+  readonly submitExpense = this.effect(
+    (expenseData$: Observable<ExpenseData>) =>
+      expenseData$.pipe(
+        tap((expenseData) => this.insertExpense({ ...expenseData, id: 1 })),
+        tapResponse(
+          () => this.patchState({ expenseData: null }),
+          (error) => this.handleError(error)
+        )
+      )
+  );
+  readonly addExpense = () =>
+    this.patchState({
+      expenseData: initExpenseData(),
+    });
   readonly handleError = (error: unknown) => console.log(error);
 }
