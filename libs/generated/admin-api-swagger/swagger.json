@@ -92,6 +92,7 @@
       "ExpenseDto": {
         "required": [
           "category",
+          "dateIncurred",
           "id",
           "merchant",
           "totalPrice"
@@ -110,6 +111,10 @@
           },
           "totalPrice": {
             "$ref": "#/components/schemas/Money"
+          },
+          "dateIncurred": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

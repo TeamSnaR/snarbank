@@ -1,9 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Text.Json;
-using Newtonsoft.Json;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,54 +41,62 @@ var expenses = new List<ExpenseDto>
     1,
     "EE",
     "Subscriptions",
-    new Money(10)
+    new Money(10),
+    new DateTime(2023, 3, 15, 16,30,15)
   ),
   new ExpenseDto(
     2,
     "The Gym Group",
     "Subscriptions",
-    new Money(24.99)
+    new Money(24.99),
+    new DateTime(2023, 3, 16, 06,10,00)
   ),
   new ExpenseDto(
     3,
     "Lidl",
     "Groceries",
-    new Money(21.39)
+    new Money(21.39),
+    new DateTime(2023, 2, 12, 18,30,11)
   ),
   new ExpenseDto(
     4,
     "Blue Star Bus",
     "Transportation",
-    new Money(6)
+    new Money(6),
+    new DateTime(2023, 2, 28, 14,01,01)
   ),
   new ExpenseDto(
     5,
     "Domino's Pizza",
     "Food",
-    new Money(17.98)
+    new Money(17.98),
+    new DateTime(2023, 3, 20, 11,30,29)
   ),
   new ExpenseDto(
     6,
     "Wise",
     "Miscellaneous",
-    new Money(30.38)
+    new Money(30.38),
+    new DateTime(2023, 4, 4, 13,45,03)
   ),
   new ExpenseDto(
     7,
     "Education",
     "Courses",
-    new Money(10)
+    new Money(10),
+    new DateTime(2023, 4, 2, 20,46,18)
   ),
   new ExpenseDto(
     8,
     "House Owner",
     "Housing",
-    new Money(695)
+    new Money(695),
+    new DateTime(2023, 3, 1, 9,40,00)
   ),
 };
 
-app.MapGet("api/expenses/recent", () => expenses.Take(5));
-app.MapGet("api/expenses", () => expenses).WithName("GetExpenses");
+app.MapGet("api/expenses/recent", () => expenses.Take(5).OrderByDescending(o => o.DateIncurred));
+app.MapGet("api/expenses", () => expenses.OrderByDescending(o => o.DateIncurred)).WithName("GetExpenses");
 app.MapGet("api/expenses/{id}", (int id) =>
 {
   return expenses.SingleOrDefault(s => s.Id == id) is var expense ?
@@ -104,7 +108,7 @@ app.MapGet("api/expenses/{id}", (int id) =>
 app.Run();
 
 public record Money(double Amount, string Currency = "GBP");
-public record ExpenseDto(long Id, string Merchant, string Category, Money TotalPrice);
+public record ExpenseDto(long Id, string Merchant, string Category, Money TotalPrice, DateTime DateIncurred);
 
 public class RequiredNotNullableSchemaFilter : ISchemaFilter
 {

@@ -5,4 +5,5 @@ export interface ExpenseDto {
   merchant: string;
   category: string;
   totalPrice?: Money;
+  dateIncurred: string;
 }

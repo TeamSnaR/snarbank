@@ -68,6 +68,7 @@ export class ExpensesFormService {
         amount: expenseFormData.price,
         currency: 'GBP',
       },
+      dateIncurred: new Date(),
     } as ExpenseData;
   };
 }

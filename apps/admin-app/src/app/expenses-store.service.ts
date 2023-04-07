@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { ExpenseDto, Money } from '@snarbank/generated/admin-api-types';
-import { concatMap, Observable, tap } from 'rxjs';
+import { concatMap, map, Observable, tap } from 'rxjs';
 
 export interface ExpenseData {
   id: string;
   merchant: string;
   category: string;
   totalPrice: Money;
+  dateIncurred: Date;
 }
 interface ExpensesStoreState {
   expenses: ExpenseDto[];
@@ -28,6 +29,7 @@ const initExpenseData = () => {
       currency: 'GBP',
       amount: 0,
     },
+    dateIncurred: new Date(),
   };
 };
 @Injectable({
@@ -65,7 +67,13 @@ export class ExpensesStore extends ComponentStore<ExpensesStoreState> {
   readonly submitExpense = this.effect(
     (expenseData$: Observable<ExpenseData>) =>
       expenseData$.pipe(
-        tap((expenseData) => this.insertExpense({ ...expenseData, id: 1 })),
+        tap((expenseData) =>
+          this.insertExpense({
+            ...expenseData,
+            id: 1,
+            dateIncurred: expenseData.dateIncurred.toISOString(),
+          })
+        ),
         tapResponse(
           () => this.patchState({ expenseData: null }),
           (error) => this.handleError(error)

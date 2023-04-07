@@ -1,7 +1,13 @@
 import { RouterModule } from '@angular/router';
 import { Component, inject } from '@angular/core';
 import { ExpensesStore } from './expenses-store.service';
-import { AsyncPipe, CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import {
+  AsyncPipe,
+  CurrencyPipe,
+  DatePipe,
+  NgFor,
+  NgIf,
+} from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExpensesFormService } from './expenses-form.service';
 
@@ -9,11 +15,12 @@ import { ExpensesFormService } from './expenses-form.service';
   standalone: true,
   imports: [
     RouterModule,
-    AsyncPipe,
-    NgFor,
-    CurrencyPipe,
     ReactiveFormsModule,
+    NgFor,
     NgIf,
+    AsyncPipe,
+    CurrencyPipe,
+    DatePipe,
   ],
   selector: 'snarbank-admin-root',
   template: `
@@ -25,6 +32,7 @@ import { ExpensesFormService } from './expenses-form.service';
           {{
             expense.totalPrice!.amount | currency : expense.totalPrice!.currency
           }}
+          {{ expense.dateIncurred | date : 'medium' }}
         </li>
       </ul>
     </div>
@@ -36,7 +44,6 @@ import { ExpensesFormService } from './expenses-form.service';
       Add expense
     </button>
     <ng-container *ngIf="expenseForm$ | async as expenseForm">
-      {{ expenseForm.status }}
       <form [formGroup]="expenseForm!" (ngSubmit)="submitExpense(expenseForm)">
         <div>
           <label for="merchant">Merchant: </label>
