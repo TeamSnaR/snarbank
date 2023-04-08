@@ -43,4 +43,6 @@ public class SnarBankDbClient
 
   public async Task<Expense?> GetAsync(string id) =>
         await _expenseCollection.Find(x => x.Id == id).FirstOrDefaultAsync().ConfigureAwait(false);
+  public async Task DeleteAsync(string id) =>
+        await _expenseCollection.DeleteOneAsync(x => x.Id == id).ConfigureAwait(false);
 }

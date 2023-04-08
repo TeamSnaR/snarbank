@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
@@ -114,8 +113,18 @@ app.MapPost("api/expenses", async (ExpenseDto expenseDto, SnarBankDbClient snarB
   var expense = new Expense(expenseDto.Merchant, expenseDto.Category, expenseDto.TotalPrice, expenseDto.DateIncurred);
   await snarBankDbClient.CreateAsync(expense);
   return Results.Created($"/api/expenses/{expense.Id}", expenseDto);
-});
+}).WithName("AddOneExpense");
+app.MapDelete("api/expenses/{id}", async (string id, SnarBankDbClient snarBankDbClient) =>
+{
+  var expense = await snarBankDbClient.GetAsync(id);
+  if (expense is null)
+  {
+    return Results.NotFound();
+  }
 
+  await snarBankDbClient.DeleteAsync(id);
+  return Results.NoContent();
+}).WithName("DeleteOneExpense");
 
 app.Run();
 

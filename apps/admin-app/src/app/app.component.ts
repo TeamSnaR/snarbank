@@ -26,15 +26,28 @@ import { ExpensesFormService } from './expenses-form.service';
   template: `
     <h1 class="text-4xl">Welcome to Snar Bank</h1>
     <div>
-      <ul>
-        <li *ngFor="let expense of expenses$ | async">
-          {{ expense.category }} {{ expense.merchant }}
-          {{
-            expense.totalPrice!.amount | currency : expense.totalPrice!.currency
-          }}
-          {{ expense.dateIncurred | date : 'medium' }}
-        </li>
-      </ul>
+      <ng-container *ngIf="expenses$ | async as expenses">
+        <ul *ngIf="expenses.length > 0; else noExpenses">
+          <li *ngFor="let expense of expenses">
+            {{ expense.category }} {{ expense.merchant }}
+            {{
+              expense.totalPrice!.amount
+                | currency : expense.totalPrice!.currency
+            }}
+            {{ expense.dateIncurred | date : 'medium' }}
+            <button
+              type="button"
+              (click)="deleteExpense(expense.id)"
+              class="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Delete
+            </button>
+          </li>
+        </ul>
+        <ng-template #noExpenses>
+          <p>No expenses to show.</p>
+        </ng-template>
+      </ng-container>
     </div>
     <button
       type="button"
@@ -134,5 +147,9 @@ export class AppComponent {
     if (expenseData) {
       this.expensesStore.submitExpense(expenseData);
     }
+  }
+
+  deleteExpense(expenseId: string) {
+    this.expensesStore.deleteExpense(expenseId);
   }
 }

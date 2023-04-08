@@ -45,15 +45,34 @@ export class ExpensesStore extends ComponentStore<ExpensesStoreState> {
     this.getExpenses();
   }
 
-  loadExpenses = this.updater((state, expenses: ExpenseDto[]) => ({
+  private loadExpenses = this.updater((state, expenses: ExpenseDto[]) => ({
     ...state,
     expenses: [...state.expenses, ...expenses],
   }));
 
-  insertExpense = this.updater((state, expense: ExpenseDto) => ({
+  private insertExpense = this.updater((state, expense: ExpenseDto) => ({
     ...state,
     expenses: [...state.expenses, expense],
   }));
+
+  private removeExpense = this.updater((state, expenseId: string) => ({
+    ...state,
+    expenses: state.expenses.filter((expense) => expense.id !== expenseId),
+  }));
+
+  readonly deleteExpense = this.effect((expenseId$: Observable<string>) =>
+    expenseId$.pipe(
+      concatMap((expenseId) =>
+        this.httpClient
+          .delete(`api/expenses/${expenseId}`)
+          .pipe(map(() => expenseId))
+      ),
+      tapResponse(
+        (expenseId) => this.removeExpense(expenseId),
+        (error) => this.handleError(error)
+      )
+    )
+  );
 
   readonly getExpenses = this.effect<void>(($) =>
     $.pipe(
