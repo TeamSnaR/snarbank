@@ -67,15 +67,14 @@ export class ExpensesStore extends ComponentStore<ExpensesStoreState> {
   readonly submitExpense = this.effect(
     (expenseData$: Observable<ExpenseData>) =>
       expenseData$.pipe(
-        tap((expenseData) =>
-          this.insertExpense({
-            ...expenseData,
-            id: 1,
-            dateIncurred: expenseData.dateIncurred.toISOString(),
-          })
+        concatMap((expenseData) =>
+          this.httpClient.post<ExpenseDto>('api/expenses', expenseData)
         ),
         tapResponse(
-          () => this.patchState({ expenseData: null }),
+          (expenseDto: ExpenseDto) => {
+            this.patchState({ expenseData: null });
+            this.insertExpense(expenseDto);
+          },
           (error) => this.handleError(error)
         )
       )

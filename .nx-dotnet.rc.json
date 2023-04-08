@@ -1,6 +1,7 @@
 {
   "nugetPackages": {
     "Swashbuckle.AspNetCore": "6.2.3",
-    "Newtonsoft.Json": "13.0.3"
+    "Newtonsoft.Json": "13.0.3",
+    "MongoDB.Driver": "2.19.1"
   }
 }

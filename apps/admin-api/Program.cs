@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
@@ -19,9 +20,14 @@ builder.Services.AddCors(options =>
   options.AddPolicy(name: AllowLocal,
     policy =>
     {
-      policy.WithOrigins("http://localhost:4200");
+      policy.WithOrigins("http://localhost:4200")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
+
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("SnarBankDb"));
+builder.Services.AddSingleton<SnarBankDbClient>();
 
 var app = builder.Build();
 
@@ -38,56 +44,56 @@ app.MapGet("/ping", () => Results.NoContent());
 var expenses = new List<ExpenseDto>
 {
   new ExpenseDto(
-    1,
+    "1",
     "EE",
     "Subscriptions",
     new Money(10),
     new DateTime(2023, 3, 15, 16,30,15)
   ),
   new ExpenseDto(
-    2,
+    "2",
     "The Gym Group",
     "Subscriptions",
     new Money(24.99),
     new DateTime(2023, 3, 16, 06,10,00)
   ),
   new ExpenseDto(
-    3,
+    "3",
     "Lidl",
     "Groceries",
     new Money(21.39),
     new DateTime(2023, 2, 12, 18,30,11)
   ),
   new ExpenseDto(
-    4,
+    "4",
     "Blue Star Bus",
     "Transportation",
     new Money(6),
     new DateTime(2023, 2, 28, 14,01,01)
   ),
   new ExpenseDto(
-    5,
+    "5",
     "Domino's Pizza",
     "Food",
     new Money(17.98),
     new DateTime(2023, 3, 20, 11,30,29)
   ),
   new ExpenseDto(
-    6,
+    "6",
     "Wise",
     "Miscellaneous",
     new Money(30.38),
     new DateTime(2023, 4, 4, 13,45,03)
   ),
   new ExpenseDto(
-    7,
+    "7",
     "Education",
     "Courses",
     new Money(10),
     new DateTime(2023, 4, 2, 20,46,18)
   ),
   new ExpenseDto(
-    8,
+    "8",
     "House Owner",
     "Housing",
     new Money(695),
@@ -96,19 +102,25 @@ var expenses = new List<ExpenseDto>
 };
 
 app.MapGet("api/expenses/recent", () => expenses.Take(5).OrderByDescending(o => o.DateIncurred));
-app.MapGet("api/expenses", () => expenses.OrderByDescending(o => o.DateIncurred)).WithName("GetExpenses");
-app.MapGet("api/expenses/{id}", (int id) =>
+app.MapGet("api/expenses", async (SnarBankDbClient snarBankDbClient) => await snarBankDbClient.GetAsync()).WithName("GetExpenses");
+app.MapGet("api/expenses/{id}", async (string id, SnarBankDbClient snarBankDbClient) =>
 {
-  return expenses.SingleOrDefault(s => s.Id == id) is var expense ?
-    Results.Ok(expense) :
+  return await snarBankDbClient.GetAsync(id) is Expense expense ?
+    Results.Ok(new ExpenseDto(expense.Id, expense.Merchant, expense.Category, expense.TotalPrice, expense.DateIncurred)) :
     Results.NotFound();
 }).WithName("GetOneExpense");
+app.MapPost("api/expenses", async (ExpenseDto expenseDto, SnarBankDbClient snarBankDbClient) =>
+{
+  var expense = new Expense(expenseDto.Merchant, expenseDto.Category, expenseDto.TotalPrice, expenseDto.DateIncurred);
+  await snarBankDbClient.CreateAsync(expense);
+  return Results.Created($"/api/expenses/{expense.Id}", expenseDto);
+});
 
 
 app.Run();
 
 public record Money(double Amount, string Currency = "GBP");
-public record ExpenseDto(long Id, string Merchant, string Category, Money TotalPrice, DateTime DateIncurred);
+public record ExpenseDto(string Id, string Merchant, string Category, Money TotalPrice, DateTime DateIncurred);
 
 public class RequiredNotNullableSchemaFilter : ISchemaFilter
 {
