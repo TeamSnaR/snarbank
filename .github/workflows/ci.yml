@@ -17,6 +17,9 @@ jobs:
       init-commands: |
         npx nx-cloud start-ci-run --stop-agents-after="build" --agent-count=3
       parallel-commands: |
+        npx nx-cloud record -- npx prettier --write .
+        npx nx-cloud record -- npx nx format:write
+        npx nx-cloud record -- npx prettier --check .
         npx nx-cloud record -- npx nx format:check
       parallel-commands-on-agents: |
         npx nx affected --target=lint --parallel=3
@@ -31,11 +34,11 @@ jobs:
     with:
       number-of-agents: 3
 
-  release: 
+  release:
     name: Release app
     runs-on: ubuntu-20.04
     needs: [main]
-    
+
     steps:
       - name: Download a Build Artifact
         uses: actions/download-artifact@v2.1.1
