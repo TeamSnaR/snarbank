@@ -10,12 +10,19 @@ import {
 } from '@angular/common';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ExpensesFormService } from './expenses-form.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   standalone: true,
   imports: [
     RouterModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
     NgFor,
     NgIf,
     AsyncPipe,
@@ -58,6 +65,20 @@ import { ExpensesFormService } from './expenses-form.service';
     </button>
     <ng-container *ngIf="expenseForm$ | async as expenseForm">
       <form [formGroup]="expenseForm!" (ngSubmit)="submitExpense(expenseForm)">
+        <mat-form-field appearance="fill">
+          <mat-label>Choose a date</mat-label>
+          <input
+            matInput
+            [matDatepicker]="picker"
+            formControlName="dateIncurred"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
         <div>
           <label for="merchant">Merchant: </label>
           <select id="merchant" formControlName="merchant">
@@ -133,6 +154,7 @@ import { ExpensesFormService } from './expenses-form.service';
 export class AppComponent {
   private readonly expensesStore = inject(ExpensesStore);
   private readonly expensesFormService = inject(ExpensesFormService);
+  private readonly snackBar = inject(MatSnackBar);
   expenseForm$ = this.expensesFormService.expenseForm$;
   categories = this.expensesFormService.categories;
   merchants = this.expensesFormService.merchants;

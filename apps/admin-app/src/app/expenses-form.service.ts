@@ -23,6 +23,7 @@ export interface ExpenseForm {
   merchant: FormControl<string>;
   category: FormControl<string>;
   price: FormControl<number>;
+  dateIncurred: FormControl<string>;
 }
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,10 @@ export class ExpensesFormService {
         Validators.required,
         PriceMustBeGreaterThanZeroValidator(),
       ]),
+      dateIncurred: this.formBuilder.control(
+        expenseData.dateIncurred.toDateString(),
+        [Validators.required]
+      ),
     });
   };
   readonly submitExpense = (expenseForm: FormGroup): ExpenseData | null => {
@@ -68,7 +73,7 @@ export class ExpensesFormService {
         amount: expenseFormData.price,
         currency: 'GBP',
       },
-      dateIncurred: new Date(),
+      dateIncurred: new Date(expenseFormData.dateIncurred),
     } as ExpenseData;
   };
 }
