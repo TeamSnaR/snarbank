@@ -22,9 +22,39 @@ jobs:
         npx nx affected --target=lint --parallel=3
         npx nx affected --target=test --parallel=3 --ci --code-coverage
         npx nx affected --target=build --parallel=3
+      artifacts-path: dist
+      artifacts-name: snarbank-artifacts
 
   agents:
     name: Nx Cloud - Agents
     uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.11.3
     with:
       number-of-agents: 3
+
+  release: 
+    name: Release app
+    runs-on: ubuntu-20.04
+    needs: [main]
+    
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v2.1.1
+        with:
+          # Artifact name
+          name: snarbank-artifacts
+          # Destination path
+          path: snarbank-artifacts
+      - name: SCP Command to Transfer Files
+        # You may pin to the exact commit or the version.
+        # uses: appleboy/scp-action@8a92fcdb1eb4ffbf538b2fa286739760aac8a95b
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.DESTINATION_HOST }}
+          # ssh port
+          port: ${{ secrets.DESTINATION_PORT }}
+          # ssh username
+          username: ${{ secrets.DEPLOYER_USER }}
+          # ssh password
+          password: ${{ secrets.DEPLOYER_PW }}
+          source: snarbank-artifacts
+          target: ${{ secrets.DESTINATION_TMP_DIR }}
