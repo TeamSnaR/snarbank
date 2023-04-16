@@ -65,6 +65,7 @@
         "tags": [
           "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
         ],
+        "operationId": "AddOneExpense",
         "requestBody": {
           "content": {
             "application/json": {
@@ -88,6 +89,27 @@
           "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
         ],
         "operationId": "GetOneExpense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Snarbank.AdminApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+        ],
+        "operationId": "DeleteOneExpense",
         "parameters": [
           {
             "name": "id",
@@ -167,7 +189,10 @@
         "additionalProperties": false
       },
       "Money": {
-        "required": ["amount", "currency"],
+        "required": [
+          "amount",
+          "currency"
+        ],
         "type": "object",
         "properties": {
           "amount": {
