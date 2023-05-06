@@ -189,7 +189,10 @@
         "additionalProperties": false
       },
       "Money": {
-        "required": ["amount", "currency"],
+        "required": [
+          "amount",
+          "currency"
+        ],
         "type": "object",
         "properties": {
           "amount": {
